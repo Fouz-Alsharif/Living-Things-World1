@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Living Things World - Discover Nature. Learn English!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelPink: '#FFB7C5',
+                        deepPink: '#FF69B4',
+                        softPinkBg: '#FFF0F5',
+                        pastelBlue: '#81D4FA',
+                        lightBlueBg: '#E0F7FA',
+                        softYellow: '#FFF59D',
+                        lightYellowBg: '#FFFDE7',
+                        lavenderCard: '#F3E5F5',
+                        pastelGreen: '#A5D6A7'
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'Quicksand', 'sans-serif'],
+                        heading: ['Fredoka', 'sans-serif'],
+                        arabic: ['Cairo', 'Dubai', 'sans-serif'],
+                        serif: ['Playfair Display', 'Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #FAFAFA;
+            color: #333333;
+            overflow-x: hidden;
+        }
+
+        .heading-font { font-family: 'Fredoka', sans-serif; }
+        .serif-font { font-family: 'Playfair Display', serif; }
+        .arabic-text { font-family: 'Cairo', 'Dubai', sans-serif; }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+
+        @keyframes flutter {
+            0%, 100% { transform: scaleX(1) rotate(-5deg); }
+            50% { transform: scaleX(0.7) rotate(5deg); }
+        }
+
+        .animate-float { animation: floatSlow 4s ease-in-out infinite; }
+        .animate-butterfly { animation: flutter 2.5s ease-in-out infinite; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(255, 183, 197, 0.4);
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(255, 105, 180, 0.1);
+        }
+
+        .hover-bounce {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .hover-bounce:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(255, 105, 180, 0.18);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #FFF0F5; }
+        ::-webkit-scrollbar-thumb { background: #FFB7C5; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FF69B4; }
+
+        /* ================= MANDATORY A4 LANDSCAPE PRINT STYLES ================= */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body > *:not(#printable-certificate-wrapper) {
+                display: none !important;
+            }
+
+            #printable-certificate-wrapper {
+                display: block !important;
+                position: fixed !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                margin: 0 !important;
+                padding: 10mm !important;
+                box-sizing: border-box !important;
+                background: white !important;
+                z-index: 999999 !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-softPinkBg via-white to-lightBlueBg min-h-screen flex flex-col">
+
+    <!-- Top Teacher Announcement Bar -->
+    <div class="bg-gradient-to-r from-deepPink via-pastelPink to-pastelBlue text-white py-2 px-6 text-center text-xs font-bold tracking-wide shadow-sm flex justify-between items-center no-print">
+        <span class="flex items-center gap-2"><i class="fa-solid fa-leaf text-yellow-200"></i> English Unit: Living Things World</span>
+        <span class="hidden md:inline bg-white/20 px-3 py-0.5 rounded-full text-xs">Slogan: Discover Nature. Learn English!</span>
+        <button onclick="toggleTeacherEdit()" id="teacherModeBtn" class="bg-white text-deepPink hover:bg-softYellow hover:text-gray-800 transition px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+            <i class="fa-solid fa-pen-to-square mr-1"></i> Teacher Mode
+        </button>
+    </div>
+
+    <!-- Sticky Header Navigation -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b-2 border-pink-100 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pastelPink to-pastelBlue flex items-center justify-center text-white text-2xl shadow-md animate-float">
+                    🦋
+                </div>
+                <div>
+                    <h1 class="heading-font text-2xl font-bold text-gray-800 tracking-tight leading-none">
+                        Living Things <span class="text-deepPink">World</span>
+                    </h1>
+                    <p class="text-[11px] text-gray-500 font-semibold tracking-wider uppercase mt-1">Discover Nature • Learn English</p>
+                </div>
+            </div>
+
+            <!-- Desktop Nav Menu -->
+            <nav class="hidden lg:flex items-center space-x-1">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-btn bg-pastelPink text-white font-bold px-4 py-2 rounded-2xl transition text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Home
+                </button>
+                <button onclick="switchTab('vocabulary')" id="nav-vocabulary" class="nav-btn text-gray-600 font-semibold px-4 py-2 rounded-2xl hover:bg-pink-100 transition text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-pastelPink"></i> Vocabulary
+                </button>
+                <button onclick="switchTab('grammar')" id="nav-grammar" class="nav-btn text-gray-600 font-semibold px-4 py-2 rounded-2xl hover:bg-blue-100 transition text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-pastelBlue"></i> Grammar World
+                </button>
+                <button onclick="switchTab('listening-speaking')" id="nav-listening-speaking" class="nav-btn text-gray-600 font-semibold px-4 py-2 rounded-2xl hover:bg-yellow-100 transition text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-headphones text-yellow-500"></i> Listening & Speaking
+                </button>
+                <button onclick="switchTab('games')" id="nav-games" class="nav-btn text-gray-600 font-semibold px-4 py-2 rounded-2xl hover:bg-purple-100 transition text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-purple-400"></i> Fun Games
+                </button>
+                <button onclick="switchTab('achievement')" id="nav-achievement" class="nav-btn text-gray-600 font-semibold px-4 py-2 rounded-2xl hover:bg-green-100 transition text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-500"></i> My Achievement
+                </button>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-2">
+                <button onclick="openPublishModal()" class="bg-gradient-to-r from-pastelPink to-deepPink text-white px-4 py-2 rounded-full font-bold text-xs shadow-md hover:opacity-90 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline">Share</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-xl text-gray-600 hover:bg-pink-50">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobileMenu" class="hidden lg:hidden border-t border-pink-100 bg-white px-4 py-4 space-y-2">
+            <button onclick="switchTab('home')" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-gray-700 hover:bg-pink-50 flex items-center gap-3"><i class="fa-solid fa-house text-deepPink"></i> Home</button>
+            <button onclick="switchTab('vocabulary')" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-gray-700 hover:bg-pink-50 flex items-center gap-3"><i class="fa-solid fa-book-open text-pastelPink"></i> Vocabulary</button>
+            <button onclick="switchTab('grammar')" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-gray-700 hover:bg-pink-50 flex items-center gap-3"><i class="fa-solid fa-wand-magic-sparkles text-pastelBlue"></i> Grammar World</button>
+            <button onclick="switchTab('listening-speaking')" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-gray-700 hover:bg-pink-50 flex items-center gap-3"><i class="fa-solid fa-headphones text-yellow-500"></i> Listening & Speaking</button>
+            <button onclick="switchTab('games')" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-gray-700 hover:bg-pink-50 flex items-center gap-3"><i class="fa-solid fa-gamepad text-purple-400"></i> Fun Games</button>
+            <button onclick="switchTab('achievement')" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-gray-700 hover:bg-pink-50 flex items-center gap-3"><i class="fa-solid fa-trophy text-amber-500"></i> My Achievement</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 no-print">
+
+        <!-- ================= SECTION 1: HOME PAGE ================= -->
+        <section id="sec-home" class="space-y-12">
+            <!-- Hero Card -->
+            <div class="glass-card bg-gradient-to-r from-softPinkBg via-white to-lightBlueBg p-8 md:p-12 rounded-3xl relative overflow-hidden border-2 border-pink-200">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
+                    <div class="space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 bg-softYellow/90 text-yellow-900 px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest shadow-sm">
+                            <span>🌸 Middle School English Unit</span>
+                        </div>
+                        <h1 class="heading-font text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">
+                            Welcome to <br/>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-deepPink via-pink-500 to-sky-500">Living Things World!</span>
+                        </h1>
+                        <p class="text-lg text-gray-600 font-medium max-w-lg leading-relaxed">
+                            Discover Nature. Learn English. Explore the World! Explore our interactive lessons created especially for middle school students!
+                        </p>
+                        
+                        <div class="flex flex-wrap justify-center lg:justify-start gap-3 pt-2">
+                            <button onclick="switchTab('vocabulary')" class="bg-gradient-to-r from-deepPink to-pastelPink text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-pink-300/50 hover:scale-105 transition flex items-center gap-2 text-base">
+                                <i class="fa-solid fa-seedling"></i> Start Learning Vocabulary
+                            </button>
+                            <button onclick="switchTab('grammar')" class="bg-white text-gray-700 border-2 border-pastelBlue font-bold px-6 py-3.5 rounded-2xl hover:bg-lightBlueBg transition flex items-center gap-2 text-base">
+                                <i class="fa-solid fa-wand-magic-sparkles text-sky-500"></i> Grammar World
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Nature SVG Illustration -->
+                    <div class="relative flex justify-center items-center">
+                        <div class="w-full max-w-md bg-white rounded-3xl p-4 shadow-xl border-4 border-pink-100 hover-bounce relative">
+                            <div class="absolute -top-6 -right-6 bg-softYellow p-3 rounded-2xl shadow-lg animate-butterfly text-3xl">
+                                🦋
+                            </div>
+                            <svg viewBox="0 0 500 380" class="w-full h-auto rounded-2xl">
+                                <rect width="500" height="380" rx="20" fill="#E0F7FA"/>
+                                <circle cx="430" cy="70" r="45" fill="#FFF59D"/>
+                                <path d="M-20 300 Q 120 220 260 280 T 520 250 L 520 400 L -20 400 Z" fill="#A5D6A7"/>
+                                <path d="M-20 330 Q 180 260 380 320 T 520 290 L 520 400 L -20 400 Z" fill="#81C784"/>
+                                <!-- Tree -->
+                                <g transform="translate(320, 140)">
+                                    <rect x="35" y="80" width="25" height="90" fill="#8D6E63" rx="5"/>
+                                    <circle cx="47" cy="70" r="50" fill="#66BB6A"/>
+                                    <circle cx="20" cy="80" r="35" fill="#81C784"/>
+                                    <circle cx="75" cy="80" r="35" fill="#81C784"/>
+                                </g>
+                                <!-- Flower -->
+                                <g transform="translate(60, 270)">
+                                    <path d="M20 60 L20 10" stroke="#388E3C" stroke-width="5" stroke-linecap="round"/>
+                                    <circle cx="20" cy="10" r="12" fill="#FF69B4"/>
+                                    <circle cx="8" cy="10" r="8" fill="#FFB7C5"/>
+                                    <circle cx="32" cy="10" r="8" fill="#FFB7C5"/>
+                                    <circle cx="20" cy="-2" r="8" fill="#FFB7C5"/>
+                                    <circle cx="20" cy="22" r="8" fill="#FFB7C5"/>
+                                    <circle cx="20" cy="10" r="7" fill="#FFF59D"/>
+                                </g>
+                                <!-- Beetle -->
+                                <g transform="translate(200, 310)">
+                                    <path d="M10 25 L0 20 M10 30 L-2 32 M10 35 L0 42 M40 25 L50 20 M40 30 L52 32 M40 35 L50 42" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                                    <ellipse cx="25" cy="30" rx="16" ry="20" fill="#E53935"/>
+                                    <line x1="25" y1="10" x2="25" y2="50" stroke="#212121" stroke-width="2"/>
+                                    <circle cx="18" cy="22" r="3" fill="#212121"/>
+                                    <circle cx="32" cy="22" r="3" fill="#212121"/>
+                                    <circle cx="25" cy="10" r="8" fill="#212121"/>
+                                </g>
+                            </svg>
+                            <p class="text-center font-bold text-gray-700 mt-2 text-sm">✨ Living Things in Nature ✨</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Section Navigation Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div onclick="switchTab('vocabulary')" class="glass-card p-5 bg-white text-center hover-bounce cursor-pointer border-2 border-pink-200">
+                    <div class="w-12 h-12 bg-pink-100 rounded-2xl mx-auto flex items-center justify-center text-pink-500 text-2xl mb-3">🌿</div>
+                    <h3 class="heading-font font-bold text-gray-800 text-base">Vocabulary</h3>
+                    <p class="text-xs text-gray-500 mt-1">Word cards & audio</p>
+                </div>
+                <div onclick="switchTab('grammar')" class="glass-card p-5 bg-white text-center hover-bounce cursor-pointer border-2 border-blue-200">
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl mx-auto flex items-center justify-center text-sky-500 text-2xl mb-3">✨</div>
+                    <h3 class="heading-font font-bold text-gray-800 text-base">Grammar</h3>
+                    <p class="text-xs text-gray-500 mt-1">Rules & 9-Q Quiz</p>
+                </div>
+                <div onclick="switchTab('listening-speaking')" class="glass-card p-5 bg-white text-center hover-bounce cursor-pointer border-2 border-yellow-200">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-2xl mx-auto flex items-center justify-center text-amber-500 text-2xl mb-3">🎧</div>
+                    <h3 class="heading-font font-bold text-gray-800 text-base">Listening</h3>
+                    <p class="text-xs text-gray-500 mt-1">Audio & speaking</p>
+                </div>
+                <div onclick="switchTab('games')" class="glass-card p-5 bg-white text-center hover-bounce cursor-pointer border-2 border-purple-200">
+                    <div class="w-12 h-12 bg-purple-100 rounded-2xl mx-auto flex items-center justify-center text-purple-500 text-2xl mb-3">🎮</div>
+                    <h3 class="heading-font font-bold text-gray-800 text-base">Fun Games</h3>
+                    <p class="text-xs text-gray-500 mt-1">Matching & puzzles</p>
+                </div>
+                <div onclick="switchTab('achievement')" class="glass-card p-5 bg-white text-center hover-bounce cursor-pointer border-2 border-green-200 col-span-2 md:col-span-1">
+                    <div class="w-12 h-12 bg-green-100 rounded-2xl mx-auto flex items-center justify-center text-emerald-500 text-2xl mb-3">🏆</div>
+                    <h3 class="heading-font font-bold text-gray-800 text-base">Certificate</h3>
+                    <p class="text-xs text-gray-500 mt-1">Printable award</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: VOCABULARY SECTION ================= -->
+        <section id="sec-vocabulary" class="hidden space-y-10">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="bg-pink-100 text-deepPink px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Unit Vocabulary Gallery</span>
+                <h2 class="heading-font text-3xl sm:text-4xl font-extrabold text-gray-800">Learn Living Things Words</h2>
+                <p class="text-gray-600 text-sm">Click the voice button to listen to English pronunciations!</p>
+            </div>
+
+            <!-- 4 Required Core Vocabulary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- 1. Creatures -->
+                <div class="glass-card p-5 bg-white border-2 border-pink-200 hover-bounce flex flex-col justify-between">
+                    <div>
+                        <div class="bg-softPinkBg rounded-2xl p-3 flex items-center justify-center h-48 mb-4 border border-pink-100 overflow-hidden">
+                            <svg viewBox="0 0 200 160" class="w-full h-full">
+                                <rect width="200" height="160" rx="12" fill="#FFF0F5"/>
+                                <!-- Bird -->
+                                <g transform="translate(15, 15)">
+                                    <circle cx="20" cy="20" r="14" fill="#81D4FA"/>
+                                    <circle cx="26" cy="16" r="2.5" fill="#000"/>
+                                    <path d="M32 20 L40 22 L32 26 Z" fill="#FFB300"/>
+                                    <path d="M12 28 Q 0 40 20 34" stroke="#81D4FA" stroke-width="3" fill="none"/>
+                                </g>
+                                <!-- Butterfly -->
+                                <g transform="translate(125, 15)">
+                                    <path d="M20 20 Q 5 0 10 20 Q 5 35 20 25 Q 35 35 30 20 Q 35 0 20 20" fill="#FF69B4"/>
+                                    <ellipse cx="20" cy="20" rx="2" ry="10" fill="#333"/>
+                                </g>
+                                <!-- Fish -->
+                                <g transform="translate(15, 95)">
+                                    <ellipse cx="30" cy="20" rx="20" ry="12" fill="#FFB7C5"/>
+                                    <polygon points="50,20 62,10 62,30" fill="#FF69B4"/>
+                                    <circle cx="18" cy="16" r="2" fill="#000"/>
+                                </g>
+                                <!-- Rabbit -->
+                                <g transform="translate(125, 85)">
+                                    <ellipse cx="25" cy="30" rx="15" ry="18" fill="#E0E0E0"/>
+                                    <circle cx="25" cy="16" r="10" fill="#E0E0E0"/>
+                                    <ellipse cx="21" cy="2" rx="3" ry="10" fill="#FFB7C5"/>
+                                    <ellipse cx="29" cy="2" rx="3" ry="10" fill="#FFB7C5"/>
+                                    <circle cx="22" cy="14" r="1.5" fill="#000"/>
+                                    <circle cx="28" cy="14" r="1.5" fill="#000"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="heading-font text-2xl font-bold text-gray-800">Creatures</h3>
+                            <button onclick="speakText('Creatures')" class="w-10 h-10 rounded-full bg-pink-100 hover:bg-deepPink hover:text-white text-deepPink transition flex items-center justify-center shadow-sm">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <p class="arabic-text text-lg font-bold text-deepPink mt-1">مخلوقات</p>
+                        <p class="text-xs text-gray-600 mt-3 bg-pink-50 p-2.5 rounded-xl border border-pink-100">
+                            <strong>Example:</strong> "Birds, fish, and butterflies are living creatures."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 2. Beetle -->
+                <div class="glass-card p-5 bg-white border-2 border-yellow-200 hover-bounce flex flex-col justify-between">
+                    <div>
+                        <div class="bg-lightYellowBg rounded-2xl p-3 flex items-center justify-center h-48 mb-4 border border-yellow-100 overflow-hidden">
+                            <svg viewBox="0 0 200 160" class="w-full h-full">
+                                <rect width="200" height="160" rx="12" fill="#FFFDE7"/>
+                                <g transform="translate(55, 15)">
+                                    <!-- Legs -->
+                                    <path d="M15 40 L-5 25 M15 60 L-10 60 M15 80 L-5 95 M65 40 L85 25 M65 60 L90 60 M65 80 L85 95" stroke="#3E2723" stroke-width="5" stroke-linecap="round"/>
+                                    <!-- Shell -->
+                                    <ellipse cx="40" cy="70" rx="30" ry="40" fill="#E53935"/>
+                                    <line x1="40" y1="30" x2="40" y2="110" stroke="#1B5E20" stroke-width="3"/>
+                                    <!-- Black Spots -->
+                                    <circle cx="25" cy="55" r="6" fill="#212121"/>
+                                    <circle cx="55" cy="55" r="6" fill="#212121"/>
+                                    <circle cx="25" cy="85" r="6" fill="#212121"/>
+                                    <circle cx="55" cy="85" r="6" fill="#212121"/>
+                                    <!-- Head & Antennae -->
+                                    <circle cx="40" cy="28" r="16" fill="#212121"/>
+                                    <path d="M32 15 Q 20 -2 10 5 M48 15 Q 60 -2 70 5" stroke="#212121" stroke-width="3" fill="none"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="heading-font text-2xl font-bold text-gray-800">Beetle</h3>
+                            <button onclick="speakText('Beetle')" class="w-10 h-10 rounded-full bg-yellow-100 hover:bg-yellow-400 text-yellow-800 transition flex items-center justify-center shadow-sm">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <p class="arabic-text text-lg font-bold text-amber-600 mt-1">خنفساء</p>
+                        <p class="text-xs text-gray-600 mt-3 bg-yellow-50 p-2.5 rounded-xl border border-yellow-100">
+                            <strong>Example:</strong> "A beetle has a hard shell and six legs."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 3. Insects -->
+                <div class="glass-card p-5 bg-white border-2 border-blue-200 hover-bounce flex flex-col justify-between">
+                    <div>
+                        <div class="bg-lightBlueBg rounded-2xl p-3 flex items-center justify-center h-48 mb-4 border border-blue-100 overflow-hidden">
+                            <svg viewBox="0 0 200 160" class="w-full h-full">
+                                <rect width="200" height="160" rx="12" fill="#E0F7FA"/>
+                                <!-- Bee -->
+                                <g transform="translate(15, 20)">
+                                    <ellipse cx="20" cy="15" rx="16" ry="12" fill="#FFD54F"/>
+                                    <line x1="14" y1="4" x2="14" y2="26" stroke="#000" stroke-width="3"/>
+                                    <line x1="24" y1="4" x2="24" y2="26" stroke="#000" stroke-width="3"/>
+                                    <path d="M12 2 Q 5 -10 20 -2" stroke="#81D4FA" stroke-width="2" fill="none"/>
+                                </g>
+                                <!-- Ant -->
+                                <g transform="translate(120, 20)">
+                                    <ellipse cx="10" cy="15" rx="6" ry="5" fill="#3E2723"/>
+                                    <ellipse cx="22" cy="15" rx="5" ry="4" fill="#3E2723"/>
+                                    <ellipse cx="36" cy="15" rx="8" ry="6" fill="#3E2723"/>
+                                </g>
+                                <!-- Butterfly -->
+                                <g transform="translate(15, 85)">
+                                    <path d="M20 20 Q 5 0 10 20 Q 5 35 20 25 Q 35 35 30 20 Q 35 0 20 20" fill="#BA68C8"/>
+                                </g>
+                                <!-- Ladybug -->
+                                <g transform="translate(120, 85)">
+                                    <circle cx="20" cy="20" r="14" fill="#FF5252"/>
+                                    <line x1="20" y1="6" x2="20" y2="34" stroke="#000" stroke-width="2"/>
+                                    <circle cx="12" cy="16" r="2" fill="#000"/>
+                                    <circle cx="28" cy="16" r="2" fill="#000"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="heading-font text-2xl font-bold text-gray-800">Insects</h3>
+                            <button onclick="speakText('Insects')" class="w-10 h-10 rounded-full bg-blue-100 hover:bg-pastelBlue hover:text-white text-sky-600 transition flex items-center justify-center shadow-sm">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <p class="arabic-text text-lg font-bold text-sky-600 mt-1">حشرات</p>
+                        <p class="text-xs text-gray-600 mt-3 bg-blue-50 p-2.5 rounded-xl border border-blue-100">
+                            <strong>Example:</strong> "Bees, ants, and butterflies are small insects."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 4. Wild animals -->
+                <div class="glass-card p-5 bg-white border-2 border-green-200 hover-bounce flex flex-col justify-between">
+                    <div>
+                        <div class="bg-green-50 rounded-2xl p-3 flex items-center justify-center h-48 mb-4 border border-green-100 overflow-hidden">
+                            <svg viewBox="0 0 200 160" class="w-full h-full">
+                                <rect width="200" height="160" rx="12" fill="#F1F8E9"/>
+                                <!-- Lion Head -->
+                                <g transform="translate(10, 10)">
+                                    <circle cx="35" cy="35" r="28" fill="#FF8F00"/>
+                                    <circle cx="35" cy="35" r="20" fill="#FFCA28"/>
+                                    <circle cx="28" cy="30" r="2" fill="#000"/>
+                                    <circle cx="42" cy="30" r="2" fill="#000"/>
+                                    <polygon points="35,35 31,40 39,40" fill="#5D4037"/>
+                                </g>
+                                <!-- Elephant -->
+                                <g transform="translate(100, 10)">
+                                    <ellipse cx="40" cy="35" rx="25" ry="20" fill="#B0BEC5"/>
+                                    <circle cx="22" cy="25" r="14" fill="#B0BEC5"/>
+                                    <path d="M12 28 Q -2 40 5 45" stroke="#B0BEC5" stroke-width="5" fill="none"/>
+                                </g>
+                                <!-- Tiger Stripes -->
+                                <g transform="translate(10, 85)">
+                                    <circle cx="35" cy="30" r="22" fill="#FB8C00"/>
+                                    <line x1="20" y1="20" x2="28" y2="24" stroke="#000" stroke-width="3"/>
+                                    <line x1="50" y1="20" x2="42" y2="24" stroke="#000" stroke-width="3"/>
+                                </g>
+                                <!-- Giraffe Neck -->
+                                <g transform="translate(120, 75)">
+                                    <rect x="20" y="20" width="16" height="55" fill="#FBC02D" rx="5"/>
+                                    <circle cx="15" cy="18" r="8" fill="#FBC02D"/>
+                                    <circle cx="24" cy="32" r="3" fill="#E65100"/>
+                                    <circle cx="28" cy="50" r="4" fill="#E65100"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="heading-font text-2xl font-bold text-gray-800">Wild animals</h3>
+                            <button onclick="speakText('Wild animals')" class="w-10 h-10 rounded-full bg-green-100 hover:bg-emerald-500 hover:text-white text-emerald-600 transition flex items-center justify-center shadow-sm">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <p class="arabic-text text-lg font-bold text-emerald-600 mt-1">حيوانات برية</p>
+                        <p class="text-xs text-gray-600 mt-3 bg-green-50 p-2.5 rounded-xl border border-green-100">
+                            <strong>Example:</strong> "Lions, elephants, tigers, and giraffes are wild animals."
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: GRAMMAR WORLD SECTION ================= -->
+        <section id="sec-grammar" class="hidden space-y-12">
+            <!-- Section Header -->
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="bg-blue-100 text-sky-700 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Grammar World</span>
+                <h2 class="heading-font text-3xl sm:text-4xl font-extrabold text-gray-800">Interactive Grammar Lessons</h2>
+                <p class="text-gray-600 text-sm">Study the three grammar rules below, try the practice activities, and take the Final Grammar Challenge!</p>
+            </div>
+
+            <!-- GRAMMAR CARD 1: Simple Present Tense -->
+            <div class="glass-card p-6 md:p-8 bg-white border-2 border-pink-200 space-y-6">
+                <div class="flex items-center gap-4 border-b border-pink-100 pb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pink-100 text-deepPink flex items-center justify-center text-2xl font-bold">1</div>
+                    <div>
+                        <h3 class="heading-font text-2xl font-bold text-gray-800">Simple Present Tense <span class="arabic-text text-lg font-normal text-pink-500 mr-2">(زمن المضارع البسيط)</span></h3>
+                        <p class="text-xs text-gray-500">Used for habits, routines, and general scientific facts.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
+                    <div class="space-y-3 bg-pink-50/60 p-4 rounded-2xl border border-pink-100">
+                        <p class="font-bold text-deepPink">📌 Structure & Rules:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li><strong>I / You / We / They</strong> + base verb (e.g., <em>need, live, eat</em>)</li>
+                            <li><strong>He / She / It</strong> + verb + <strong>s / es</strong> (e.g., <em>needs, lives, eats</em>)</li>
+                        </ul>
+                        <div class="pt-2 border-t border-pink-200/50">
+                            <p class="font-bold text-gray-800">Negatives & Questions:</p>
+                            <p class="text-xs">Negative: <em>do not / does not</em> + base verb</p>
+                            <p class="text-xs">Question: <em>Do / Does</em> + subject + base verb?</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 bg-yellow-50/60 p-4 rounded-2xl border border-yellow-100">
+                        <p class="font-bold text-amber-800">💡 Examples with Arabic Translation:</p>
+                        <ul class="space-y-1.5 text-xs">
+                            <li class="flex justify-between border-b pb-1"><span>Plants need water.</span><span class="arabic-text font-bold text-amber-900">النباتات تحتاج إلى الماء.</span></li>
+                            <li class="flex justify-between border-b pb-1"><span>A beetle lives in the garden.</span><span class="arabic-text font-bold text-amber-900">تعيش الخنفساء في الحديقة.</span></li>
+                            <li class="flex justify-between border-b pb-1"><span>Lions eat meat.</span><span class="arabic-text font-bold text-amber-900">الأسود تأكل اللحوم.</span></li>
+                            <li class="flex justify-between"><span>She feeds her cat every day.</span><span class="arabic-text font-bold text-amber-900">هي تطعم قطتها كل يوم.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interactive Practice 1 -->
+                <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-3">
+                    <h4 class="font-bold text-gray-800 text-sm">✏️ Interactive Practice: Simple Present</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-xl border flex items-center justify-between">
+                            <span>1. A butterfly _____ flowers.</span>
+                            <div class="space-x-1">
+                                <button onclick="checkPractice('sp1', 'visit', false, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">visit</button>
+                                <button onclick="checkPractice('sp1', 'visits', true, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">visits</button>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border flex items-center justify-between">
+                            <span>2. Plants _____ sunlight.</span>
+                            <div class="space-x-1">
+                                <button onclick="checkPractice('sp2', 'need', true, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">need</button>
+                                <button onclick="checkPractice('sp2', 'needs', false, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">needs</button>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border flex items-center justify-between">
+                            <span>3. _____ a beetle have 6 legs?</span>
+                            <div class="space-x-1">
+                                <button onclick="checkPractice('sp3', 'Do', false, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">Do</button>
+                                <button onclick="checkPractice('sp3', 'Does', true, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">Does</button>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border flex items-center justify-between">
+                            <span>4. Lions _____ meat.</span>
+                            <div class="space-x-1">
+                                <button onclick="checkPractice('sp4', 'eat', true, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">eat</button>
+                                <button onclick="checkPractice('sp4', 'eats', false, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-pink-100 rounded-lg">eats</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRAMMAR CARD 2: Passive Voice — Simple Present -->
+            <div class="glass-card p-6 md:p-8 bg-white border-2 border-blue-200 space-y-6">
+                <div class="flex items-center gap-4 border-b border-blue-100 pb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-sky-600 flex items-center justify-center text-2xl font-bold">2</div>
+                    <div>
+                        <h3 class="heading-font text-2xl font-bold text-gray-800">Passive Voice — Simple Present <span class="arabic-text text-lg font-normal text-sky-500 mr-2">(المبني للمجهول)</span></h3>
+                        <p class="text-xs text-gray-500">Used when the action or receiver is more important than the doer.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
+                    <div class="space-y-3 bg-lightBlueBg/60 p-4 rounded-2xl border border-blue-100">
+                        <p class="font-bold text-sky-700">📌 Structure & Rule:</p>
+                        <p class="text-xs font-bold bg-white p-2 rounded-xl border border-blue-200 text-center">
+                            Subject + am / is / are + Past Participle (V3)
+                        </p>
+                        <ul class="list-disc list-inside text-xs space-y-1">
+                            <li>Singular subject &rarr; <strong>is</strong> (e.g., <em>Honey is produced...</em>)</li>
+                            <li>Plural subject &rarr; <strong>are</strong> (e.g., <em>Animals are protected...</em>)</li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-2 bg-pink-50/60 p-4 rounded-2xl border border-pink-100">
+                        <p class="font-bold text-deepPink">💡 Active vs Passive Examples:</p>
+                        <ul class="space-y-1.5 text-xs">
+                            <li class="border-b pb-1">
+                                <span class="text-gray-500">Active:</span> People protect wild animals.<br/>
+                                <span class="font-bold text-deepPink">Passive:</span> Wild animals <strong>are protected</strong> by people.
+                            </li>
+                            <li class="border-b pb-1">
+                                <span class="text-gray-500">Active:</span> Farmers grow plants.<br/>
+                                <span class="font-bold text-deepPink">Passive:</span> Plants <strong>are grown</strong> by farmers.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Active to Passive Converter Interactive Exercise -->
+                <div class="bg-sky-50/80 p-5 rounded-2xl border border-sky-200 space-y-3">
+                    <h4 class="font-bold text-sky-800 text-sm">🔄 Active to Passive Converter Exercise</h4>
+                    <p class="text-xs text-gray-600">Active: "People protect wild animals." &rarr; Convert to Passive below:</p>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span class="font-bold text-gray-700">Wild animals</span>
+                        <select id="activeToPassiveSelect" class="p-2 border-2 border-sky-300 rounded-xl font-bold bg-white focus:outline-none">
+                            <option value="">-- Select Verb --</option>
+                            <option value="is protected">is protected</option>
+                            <option value="are protected">are protected</option>
+                            <option value="protect">protect</option>
+                        </select>
+                        <span class="font-bold text-gray-700">by people.</span>
+                        <button onclick="checkPassiveConverter()" class="px-4 py-2 bg-sky-500 text-white font-bold rounded-xl hover:bg-sky-600 transition">Check</button>
+                    </div>
+                    <div id="passiveConverterFeedback" class="hidden text-xs font-bold"></div>
+                </div>
+
+                <!-- Interactive Practice 2 -->
+                <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-3">
+                    <h4 class="font-bold text-gray-800 text-sm">✏️ Interactive Practice: Passive Voice</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-xl border flex items-center justify-between">
+                            <span>1. Animals _____ protected in parks.</span>
+                            <div class="space-x-1">
+                                <button onclick="checkPractice('pv1', 'is', false, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-blue-100 rounded-lg">is</button>
+                                <button onclick="checkPractice('pv1', 'are', true, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-blue-100 rounded-lg">are</button>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border flex items-center justify-between">
+                            <span>2. Honey _____ produced by bees.</span>
+                            <div class="space-x-1">
+                                <button onclick="checkPractice('pv2', 'is', true, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-blue-100 rounded-lg">is</button>
+                                <button onclick="checkPractice('pv2', 'are', false, this)" class="px-2.5 py-1 bg-gray-100 hover:bg-blue-100 rounded-lg">are</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRAMMAR CARD 3: Where Clause -->
+            <div class="glass-card p-6 md:p-8 bg-white border-2 border-yellow-200 space-y-6">
+                <div class="flex items-center gap-4 border-b border-yellow-100 pb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-yellow-100 text-amber-700 flex items-center justify-center text-2xl font-bold">3</div>
+                    <div>
+                        <h3 class="heading-font text-2xl font-bold text-gray-800">Where Clause <span class="arabic-text text-lg font-normal text-amber-600 mr-2">(جملة الوصل المكانية Where)</span></h3>
+                        <p class="text-xs text-gray-500">Used to talk about or describe a place.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
+                    <div class="space-y-3 bg-lightYellowBg/70 p-4 rounded-2xl border border-yellow-200">
+                        <p class="font-bold text-amber-800">📌 Structure & Rule:</p>
+                        <p class="text-xs font-bold bg-white p-2 rounded-xl border border-yellow-300 text-center">
+                            Place + where + subject + verb
+                        </p>
+                        <p class="arabic-text text-xs text-amber-900 leading-relaxed bg-white/80 p-2.5 rounded-xl border">
+                            نستخدم <strong>where</strong> للحديث عن المكان الذي يحدث فيه شيء أو تعيش فيه الكائنات.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 bg-green-50/60 p-4 rounded-2xl border border-green-100">
+                        <p class="font-bold text-emerald-800">💡 Nature Examples:</p>
+                        <ul class="space-y-1.5 text-xs">
+                            <li class="border-b pb-1">A garden is a place <strong>where</strong> plants grow.</li>
+                            <li class="border-b pb-1">A zoo is a place <strong>where</strong> people can see wild animals.</li>
+                            <li class="border-b pb-1">A pond is a place <strong>where</strong> frogs live.</li>
+                            <li>A forest is a place <strong>where</strong> animals find food.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interactive Practice 3 -->
+                <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-3">
+                    <h4 class="font-bold text-gray-800 text-sm">✏️ Interactive Practice: Where Clause</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-xl border flex flex-col gap-2">
+                            <span>1. A forest is a place _____ wild animals live.</span>
+                            <div class="flex gap-2">
+                                <button onclick="checkPractice('wc1', 'where', true, this)" class="w-1/2 py-1 bg-gray-100 hover:bg-yellow-200 rounded-lg font-bold">where</button>
+                                <button onclick="checkPractice('wc1', 'who', false, this)" class="w-1/2 py-1 bg-gray-100 hover:bg-yellow-200 rounded-lg font-bold">who</button>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border flex flex-col gap-2">
+                            <span>2. A garden is a place where plants _____.</span>
+                            <div class="flex gap-2">
+                                <button onclick="checkPractice('wc2', 'grow', true, this)" class="w-1/2 py-1 bg-gray-100 hover:bg-yellow-200 rounded-lg font-bold">grow</button>
+                                <button onclick="checkPractice('wc2', 'grows', false, this)" class="w-1/2 py-1 bg-gray-100 hover:bg-yellow-200 rounded-lg font-bold">grows</button>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border flex flex-col gap-2">
+                            <span>3. A pond is a place where fish _____.</span>
+                            <div class="flex gap-2">
+                                <button onclick="checkPractice('wc3', 'live', true, this)" class="w-1/2 py-1 bg-gray-100 hover:bg-yellow-200 rounded-lg font-bold">live</button>
+                                <button onclick="checkPractice('wc3', 'lives', false, this)" class="w-1/2 py-1 bg-gray-100 hover:bg-yellow-200 rounded-lg font-bold">lives</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= FINAL GRAMMAR CHALLENGE QUIZ (9 QUESTIONS) ================= -->
+            <div id="grammar-challenge-card" class="glass-card p-6 md:p-10 bg-gradient-to-br from-white via-softPinkBg to-lightBlueBg border-4 border-pink-300 rounded-3xl shadow-xl space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="bg-yellow-200 text-yellow-900 px-4 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest shadow-sm">
+                        🏆 Final Evaluation
+                    </span>
+                    <h3 class="heading-font text-3xl font-extrabold text-gray-800">Final Grammar Challenge</h3>
+                    <p class="text-xs text-gray-600">Answer 9 step-by-step questions (3 per topic). Score 7 or higher to earn the <strong>Grammar Star Badge</strong>!</p>
+                </div>
+
+                <!-- Quiz Wrapper -->
+                <div id="quizContainer" class="bg-white p-6 rounded-2xl border-2 border-pink-200 shadow-sm space-y-6 max-w-2xl mx-auto">
+                    <!-- Quiz Progress Bar -->
+                    <div class="flex items-center justify-between text-xs font-bold text-gray-500">
+                        <span id="quizQuestionTracker">Question 1 of 9</span>
+                        <span id="quizTopicTracker" class="text-deepPink font-extrabold">Topic: Simple Present</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="quizProgressBar" class="bg-gradient-to-r from-deepPink to-pastelBlue h-2.5 transition-all duration-300 w-[11.1%]"></div>
+                    </div>
+
+                    <!-- Dynamic Question Area -->
+                    <div id="quizQuestionArea" class="space-y-4">
+                        <h4 id="quizQuestionText" class="heading-font text-lg font-bold text-gray-800">1. A butterfly _____ flowers in spring.</h4>
+                        <div id="quizOptionsContainer" class="grid grid-cols-1 gap-2.5">
+                            <!-- Options injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Instant Feedback Message -->
+                    <div id="quizFeedbackBox" class="hidden p-4 rounded-xl text-xs font-bold space-y-1"></div>
+
+                    <!-- Quiz Navigation Buttons -->
+                    <div class="flex justify-between items-center pt-2">
+                        <button id="quizNextBtn" onclick="nextQuizQuestion()" class="hidden ml-auto px-6 py-2.5 bg-gradient-to-r from-deepPink to-pastelPink text-white font-bold rounded-xl text-xs shadow-md hover:scale-105 transition">
+                            Next Question &rarr;
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Final Score Screen (Hidden by default) -->
+                <div id="quizScoreScreen" class="hidden text-center space-y-6 bg-white p-8 rounded-3xl border-2 border-pink-200 max-w-xl mx-auto shadow-lg">
+                    <div class="w-20 h-20 bg-yellow-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner animate-bounce">
+                        🏆
+                    </div>
+                    <h3 class="heading-font text-3xl font-extrabold text-gray-800">Quiz Completed!</h3>
+                    <p class="text-gray-600 text-sm">You scored <strong id="finalScoreDisplay" class="text-deepPink text-2xl">0</strong> out of <strong>9</strong></p>
+                    
+                    <div id="scoreFeedbackMessage" class="p-4 rounded-2xl text-xs font-bold bg-pink-50 text-deepPink border border-pink-100"></div>
+
+                    <!-- Grammar Star Badge Display -->
+                    <div id="grammarStarBadgeContainer" class="hidden p-4 bg-yellow-50 rounded-2xl border-2 border-yellow-300 flex items-center justify-center gap-3">
+                        <span class="text-3xl">🌟</span>
+                        <div class="text-left">
+                            <p class="font-extrabold text-yellow-900 text-sm">Grammar Star Badge Unlocked!</p>
+                            <p class="text-[11px] text-yellow-700">Added to your My Achievement section.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-4">
+                        <button onclick="resetGrammarQuiz()" class="px-6 py-3 bg-gray-200 text-gray-800 hover:bg-gray-300 font-bold rounded-xl text-xs transition">
+                            🔄 Try Again
+                        </button>
+                        <button onclick="switchTab('achievement')" class="px-6 py-3 bg-deepPink text-white hover:bg-pink-600 font-bold rounded-xl text-xs shadow-md transition">
+                            View Achievement Page &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= SECTION 4: LISTENING & SPEAKING ================= -->
+        <section id="sec-listening-speaking" class="hidden space-y-10">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="bg-yellow-100 text-yellow-800 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Audio & Speech Lab</span>
+                <h2 class="heading-font text-3xl sm:text-4xl font-extrabold text-gray-800">Listening & Speaking Practice</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Listening Story Player -->
+                <div class="glass-card p-6 bg-white border-2 border-yellow-200 space-y-4">
+                    <div class="flex items-center gap-3 border-b pb-3">
+                        <div class="w-10 h-10 bg-yellow-100 text-amber-600 rounded-xl flex items-center justify-center text-xl">🎧</div>
+                        <h3 class="heading-font text-xl font-bold text-gray-800">Listening Story: "Nature In Spring"</h3>
+                    </div>
+                    <p id="listeningStoryText" class="bg-yellow-50/70 p-4 rounded-2xl text-xs sm:text-sm text-gray-700 border border-yellow-100 leading-relaxed">
+                        "In nature, many creatures wake up in spring. The tiny beetle crawls on green leaves, while bees collect nectar from flowers. Wild animals explore the forest where trees provide shelter."
+                    </p>
+                    <button onclick="playListeningStory()" class="w-full bg-amber-400 hover:bg-amber-500 text-yellow-950 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-play"></i> Listen to Audio Story
+                    </button>
+                </div>
+
+                <!-- Microphone Speech Simulator -->
+                <div class="glass-card p-6 bg-white border-2 border-pink-200 space-y-4 text-center">
+                    <div class="flex items-center gap-3 border-b pb-3 text-left">
+                        <div class="w-10 h-10 bg-pink-100 text-deepPink rounded-xl flex items-center justify-center text-xl">🎙️</div>
+                        <h3 class="heading-font text-xl font-bold text-gray-800">Pronunciation Practice</h3>
+                    </div>
+                    <p class="text-xs text-gray-500">Read the phrase aloud and press the microphone button to practice!</p>
+                    <p class="heading-font text-lg font-bold text-deepPink bg-pink-50 p-3 rounded-2xl border border-pink-100">
+                        "Wild animals are protected by people."
+                    </p>
+                    <button onclick="simulateMicRecord()" id="micBtn" class="w-16 h-16 rounded-full bg-deepPink text-white text-2xl flex items-center justify-center mx-auto shadow-lg hover:scale-110 transition animate-bounce">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <p id="micStatus" class="text-xs font-bold text-gray-500">Click microphone & speak aloud</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 5: FUN GAMES ================= -->
+        <section id="sec-games" class="hidden space-y-10">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="bg-purple-100 text-purple-700 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Game Zone</span>
+                <h2 class="heading-font text-3xl sm:text-4xl font-extrabold text-gray-800">Interactive Nature Games</h2>
+            </div>
+
+            <!-- Guess the Creature Game -->
+            <div class="glass-card p-6 md:p-8 bg-white border-2 border-purple-200 text-center space-y-4 max-w-2xl mx-auto">
+                <span class="text-4xl">🐞</span>
+                <h3 class="heading-font text-xl font-bold text-purple-800">Guess the Creature Clue!</h3>
+                <p class="text-gray-700 font-bold text-sm bg-purple-50 p-4 rounded-2xl border border-purple-100">
+                    "I have 6 legs, antennae, and a hard shell with spots. What am I?"
+                </p>
+                <div class="flex justify-center gap-3">
+                    <button onclick="submitGuess('Beetle')" class="px-6 py-2.5 bg-purple-100 hover:bg-purple-600 hover:text-white rounded-xl font-bold text-xs transition">Beetle</button>
+                    <button onclick="submitGuess('Lion')" class="px-6 py-2.5 bg-purple-100 hover:bg-purple-600 hover:text-white rounded-xl font-bold text-xs transition">Lion</button>
+                    <button onclick="submitGuess('Fish')" class="px-6 py-2.5 bg-purple-100 hover:bg-purple-600 hover:text-white rounded-xl font-bold text-xs transition">Fish</button>
+                </div>
+                <div id="guessFeedback" class="hidden font-bold text-xs"></div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 6: MY ACHIEVEMENT & CERTIFICATE ================= -->
+        <section id="sec-achievement" class="hidden space-y-10">
+            <!-- Header -->
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="bg-emerald-100 text-emerald-800 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Progress & Rewards</span>
+                <h2 class="heading-font text-3xl sm:text-4xl font-extrabold text-gray-800">My Achievement Dashboard</h2>
+                <p class="text-gray-600 text-sm">Customize your details below and print your official certificate!</p>
+            </div>
+
+            <!-- Badges Summary Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-4 bg-white border-2 border-pink-200 flex items-center gap-3">
+                    <div class="text-3xl">🌿</div>
+                    <div>
+                        <p class="font-bold text-xs text-gray-800">Vocabulary Mastered</p>
+                        <p class="text-xs text-pink-500 font-bold">4 / 4 Core Terms</p>
+                    </div>
+                </div>
+                <div class="glass-card p-4 bg-white border-2 border-yellow-200 flex items-center gap-3">
+                    <div id="dashboardBadgeIcon" class="text-3xl">⭐</div>
+                    <div>
+                        <p class="font-bold text-xs text-gray-800">Grammar Badge Status</p>
+                        <p id="dashboardBadgeStatus" class="text-xs text-amber-600 font-bold">Complete Grammar Challenge</p>
+                    </div>
+                </div>
+                <div class="glass-card p-4 bg-white border-2 border-blue-200 flex items-center gap-3">
+                    <div class="text-3xl">🏆</div>
+                    <div>
+                        <p class="font-bold text-xs text-gray-800">Certificate Status</p>
+                        <p class="text-xs text-sky-500 font-bold">Ready to Print</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificate Customization Form -->
+            <div class="glass-card p-6 bg-white border-2 border-pink-200 grid grid-cols-1 md:grid-cols-3 gap-6 shadow-sm">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Student Name:</label>
+                    <input type="text" id="inputStudentName" value="Sara Ahmed" oninput="updateCertificateFields()" class="w-full p-2.5 border-2 border-pink-200 rounded-xl focus:border-deepPink focus:outline-none font-bold text-gray-800 text-xs"/>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Teacher Name:</label>
+                    <input type="text" id="inputTeacherName" value="Ms. Layla Al-Hassan" oninput="updateCertificateFields()" class="w-full p-2.5 border-2 border-blue-200 rounded-xl focus:border-pastelBlue focus:outline-none font-bold text-gray-800 text-xs"/>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Issue Date:</label>
+                    <input type="text" id="inputCertDate" value="October 21, 2026" oninput="updateCertificateFields()" class="w-full p-2.5 border-2 border-yellow-200 rounded-xl focus:border-softYellow focus:outline-none font-bold text-gray-800 text-xs"/>
+                </div>
+            </div>
+
+            <!-- Print Action Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-softPinkBg to-lightBlueBg p-4 rounded-2xl border border-pink-200">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🖨️</span>
+                    <div>
+                        <p class="heading-font text-sm font-bold text-gray-800">A4 Landscape Printable Certificate</p>
+                        <p class="text-xs text-gray-500">Prints exclusively the framed award sheet.</p>
+                    </div>
+                </div>
+
+                <button onclick="triggerPrintCertificate()" class="bg-gradient-to-r from-deepPink to-pastelPink text-white font-extrabold px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition flex items-center gap-2 text-xs">
+                    <i class="fa-solid fa-print"></i> Print Certificate
+                </button>
+            </div>
+
+            <!-- ================= CERTIFICATE A4 LANDSCAPE FRAME ================= -->
+            <div id="printable-certificate-wrapper" class="w-full overflow-x-auto flex justify-center py-4">
+                <div class="w-[280mm] h-[195mm] bg-white border-[10px] border-pink-300 rounded-3xl p-6 relative shadow-2xl flex flex-col justify-between overflow-hidden select-none" style="background: linear-gradient(135deg, #FFF0F5 0%, #FFFFFF 50%, #E0F7FA 100%);">
+                    
+                    <!-- Inner Dashed Border -->
+                    <div class="w-full h-full border-4 border-dashed border-pink-400 rounded-2xl p-6 flex flex-col justify-between relative z-10">
+                        
+                        <!-- Header -->
+                        <div class="flex justify-between items-start">
+                            <div class="w-16 h-16 text-pink-400">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="20" cy="20" r="15" fill="#FFB7C5" opacity="0.8"/>
+                                    <circle cx="40" cy="20" r="12" fill="#81D4FA" opacity="0.8"/>
+                                    <circle cx="28" cy="28" r="8" fill="#FF69B4"/>
+                                </svg>
+                            </div>
+
+                            <div class="text-center space-y-1">
+                                <div class="inline-flex items-center gap-2 bg-gradient-to-r from-deepPink to-pastelBlue text-white px-6 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
+                                    <span>🌟 Living Things World 🌟</span>
+                                </div>
+                                <h1 class="serif-font text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-deepPink via-pink-600 to-sky-600 uppercase tracking-tight mt-1">
+                                    Certificate of Achievement
+                                </h1>
+                                <p class="heading-font text-xs text-pink-500 font-bold tracking-widest uppercase">Discover Nature • Learn English</p>
+                            </div>
+
+                            <div class="w-16 h-16 text-sky-400">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="70" cy="30" r="16" fill="#FF5252"/>
+                                    <line x1="70" y1="14" x2="70" y2="46" stroke="#000" stroke-width="2"/>
+                                    <circle cx="62" cy="25" r="2.5" fill="#000"/>
+                                    <circle cx="78" cy="25" r="2.5" fill="#000"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="text-center my-auto space-y-3">
+                            <p class="text-gray-600 font-medium text-xs italic">This certificate is proudly awarded to</p>
+                            <div class="inline-block relative px-10 py-1 border-b-4 border-pink-400">
+                                <h2 id="certDisplayStudentName" class="serif-font text-3xl font-extrabold text-gray-800">
+                                    Sara Ahmed
+                                </h2>
+                            </div>
+                            <p class="text-gray-700 text-xs sm:text-sm font-semibold max-w-xl mx-auto leading-relaxed pt-2">
+                                This certificate is awarded for successfully completing the <strong class="text-deepPink">Living Things World</strong> activities, mastering vocabulary, grammar rules, listening comprehension, and nature challenges.
+                            </p>
+                        </div>
+
+                        <!-- Footer Signatures -->
+                        <div class="flex justify-between items-end pt-2 border-t border-pink-100">
+                            <div class="text-center space-y-1 w-48">
+                                <p id="certDisplayTeacherName" class="heading-font text-xs font-bold text-gray-800 border-b border-gray-400 pb-1">
+                                    Ms. Layla Al-Hassan
+                                </p>
+                                <p class="text-[9px] text-gray-500 uppercase font-bold">Teacher's Signature</p>
+                            </div>
+
+                            <div class="relative flex flex-col items-center">
+                                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-yellow-400 via-softYellow to-amber-500 border-2 border-white shadow-md flex items-center justify-center text-white text-xl font-bold">
+                                    🏆
+                                </div>
+                            </div>
+
+                            <div class="text-center space-y-1 w-48">
+                                <p id="certDisplayDate" class="heading-font text-xs font-bold text-gray-800 border-b border-gray-400 pb-1">
+                                    October 21, 2026
+                                </p>
+                                <p class="text-[9px] text-gray-500 uppercase font-bold">Date Awarded</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-pink-100 py-6 text-center text-xs text-gray-500 space-y-1 no-print">
+        <p class="font-bold text-gray-700">Living Things World • Middle School English Unit</p>
+        <p>Slogan: <em>Discover Nature. Learn English!</em></p>
+    </footer>
+
+    <!-- Publish / Share Modal -->
+    <div id="publishModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+        <div class="bg-white max-w-md w-full rounded-3xl p-6 space-y-4 shadow-2xl border-2 border-pink-200">
+            <div class="flex justify-between items-center">
+                <h3 class="heading-font text-xl font-bold text-gray-800">Share Website Link</h3>
+                <button onclick="closePublishModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+            </div>
+            <p class="text-xs text-gray-600">Share this interactive lesson unit with your middle school students!</p>
+            <div class="space-y-2">
+                <input type="text" readonly id="shareUrlInput" value="https://living-things-world.edu/unit3" class="w-full text-xs p-3 bg-gray-50 border rounded-xl font-mono text-gray-700"/>
+                <button onclick="copyShareUrl()" class="w-full bg-deepPink text-white text-xs font-bold py-2.5 rounded-xl hover:bg-pink-600">Copy Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Web Speech Synthesis
+        let speechSynth = window.speechSynthesis;
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                speechSynth.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                speechSynth.speak(utterance);
+            }
+        }
+
+        // Tab Navigation Logic
+        function switchTab(tabId) {
+            const sections = ['home', 'vocabulary', 'grammar', 'listening-speaking', 'games', 'achievement'];
+            sections.forEach(sec => {
+                document.getElementById(`sec-${sec}`).classList.add('hidden');
+            });
+
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-pastelPink', 'text-white');
+                btn.classList.add('text-gray-600');
+            });
+
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-gray-600');
+                activeNav.classList.add('bg-pastelPink', 'text-white');
+            }
+
+            document.getElementById('mobileMenu').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Interactive Practice Checker
+        function checkPractice(id, userChoice, isCorrect, btnElement) {
+            const parent = btnElement.parentElement;
+            const buttons = parent.querySelectorAll('button');
+            buttons.forEach(b => {
+                b.classList.remove('bg-emerald-500', 'bg-red-500', 'text-white');
+            });
+
+            if (isCorrect) {
+                btnElement.classList.add('bg-emerald-500', 'text-white');
+                confetti({ particleCount: 25, spread: 50, origin: { y: 0.7 } });
+            } else {
+                btnElement.classList.add('bg-red-500', 'text-white');
+            }
+        }
+
+        // Active to Passive Converter Checker
+        function checkPassiveConverter() {
+            const val = document.getElementById('activeToPassiveSelect').value;
+            const feedback = document.getElementById('passiveConverterFeedback');
+            feedback.classList.remove('hidden');
+
+            if (val === 'are protected') {
+                feedback.className = "text-xs font-bold text-emerald-600 bg-emerald-50 p-2 rounded-xl border border-emerald-200 mt-2";
+                feedback.innerText = "✨ Correct! 'Wild animals are protected by people.'";
+                confetti({ particleCount: 30 });
+            } else {
+                feedback.className = "text-xs font-bold text-red-500 bg-red-50 p-2 rounded-xl border border-red-200 mt-2";
+                feedback.innerText = "❌ Incorrect! Remember: 'Wild animals' is plural, so we use 'are protected'.";
+            }
+        }
+
+        // ================= 9-QUESTION FINAL GRAMMAR CHALLENGE DATA & LOGIC =================
+        const grammarQuizData = [
+            // Simple Present (3 Questions)
+            {
+                topic: "Simple Present Tense",
+                question: "1. A butterfly _____ flowers in spring.",
+                options: ["visit", "visits", "visiting"],
+                correct: 1,
+                explanation: "Correct! 'A butterfly' is singular (it), so we add '-s' to the verb (visits)."
+            },
+            {
+                topic: "Simple Present Tense",
+                question: "2. Plants _____ sunlight and water to grow.",
+                options: ["need", "needs", "needing"],
+                correct: 0,
+                explanation: "Correct! 'Plants' is plural (they), so we use the base verb (need)."
+            },
+            {
+                topic: "Simple Present Tense",
+                question: "3. _____ a beetle have six legs?",
+                options: ["Do", "Does", "Is"],
+                correct: 1,
+                explanation: "Correct! We use 'Does' for singular subjects like 'a beetle'."
+            },
+
+            // Passive Voice (3 Questions)
+            {
+                topic: "Passive Voice",
+                question: "4. Honey _____ produced by bees.",
+                options: ["is", "are", "am"],
+                correct: 0,
+                explanation: "Correct! 'Honey' is an uncountable singular noun, so we use 'is'."
+            },
+            {
+                topic: "Passive Voice",
+                question: "5. Wild animals _____ protected in national parks.",
+                options: ["is", "are", "be"],
+                correct: 1,
+                explanation: "Correct! 'Wild animals' is plural, so we use 'are protected'."
+            },
+            {
+                topic: "Passive Voice",
+                question: "6. Convert to Passive: 'Farmers grow plants.' &rarr; 'Plants _____ by farmers.'",
+                options: ["is grown", "are grown", "are grow"],
+                correct: 1,
+                explanation: "Correct! 'Plants' (plural) + 'are' + V3 'grown'."
+            },
+
+            // Where Clause (3 Questions)
+            {
+                topic: "Where Clause",
+                question: "7. A forest is a place _____ many creatures live.",
+                options: ["where", "who", "which"],
+                correct: 0,
+                explanation: "Correct! We use 'where' to describe a place."
+            },
+            {
+                topic: "Where Clause",
+                question: "8. A garden is a place where flowers _____.",
+                options: ["grow", "grows", "growing"],
+                correct: 0,
+                explanation: "Correct! 'Flowers' is plural, so we use 'grow'."
+            },
+            {
+                topic: "Where Clause",
+                question: "9. A pond is a place where frogs _____.",
+                options: ["lives", "live", "living"],
+                correct: 1,
+                explanation: "Correct! 'frogs' (plural) + base verb 'live'."
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let selectedQuizOption = null;
+
+        function loadQuizQuestion() {
+            const q = grammarQuizData[currentQuizIndex];
+            document.getElementById('quizQuestionTracker').innerText = `Question ${currentQuizIndex + 1} of 9`;
+            document.getElementById('quizTopicTracker').innerText = `Topic: ${q.topic}`;
+            document.getElementById('quizProgressBar').style.width = `${((currentQuizIndex + 1) / 9) * 100}%`;
+            document.getElementById('quizQuestionText').innerHTML = q.question;
+
+            const optionsContainer = document.getElementById('quizOptionsContainer');
+            optionsContainer.innerHTML = '';
+            selectedQuizOption = null;
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl border-2 border-pink-100 hover:border-deepPink hover:bg-pink-50 text-xs font-bold text-gray-700 transition flex items-center justify-between";
+                btn.innerHTML = `<span>${opt}</span><i class="fa-regular fa-circle text-gray-300"></i>`;
+                btn.onclick = () => selectQuizAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quizFeedbackBox').classList.add('hidden');
+            document.getElementById('quizNextBtn').classList.add('hidden');
+        }
+
+        function selectQuizAnswer(selectedIndex, btnElement) {
+            const q = grammarQuizData[currentQuizIndex];
+            const container = document.getElementById('quizOptionsContainer');
+            const buttons = container.querySelectorAll('button');
+
+            buttons.forEach(b => b.disabled = true);
+
+            const feedbackBox = document.getElementById('quizFeedbackBox');
+            feedbackBox.classList.remove('hidden');
+
+            if (selectedIndex === q.correct) {
+                quizScore++;
+                btnElement.className = "w-full text-left p-3 rounded-xl border-2 border-emerald-400 bg-emerald-50 text-xs font-bold text-emerald-800 flex items-center justify-between";
+                btnElement.innerHTML = `<span>${q.options[selectedIndex]}</span><i class="fa-solid fa-circle-check text-emerald-500"></i>`;
+                
+                feedbackBox.className = "p-3 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedbackBox.innerHTML = `🎉 ${q.explanation}`;
+                confetti({ particleCount: 20, spread: 40 });
+            } else {
+                btnElement.className = "w-full text-left p-3 rounded-xl border-2 border-red-400 bg-red-50 text-xs font-bold text-red-800 flex items-center justify-between";
+                btnElement.innerHTML = `<span>${q.options[selectedIndex]}</span><i class="fa-solid fa-circle-xmark text-red-500"></i>`;
+                
+                // Highlight correct option
+                buttons[q.correct].className = "w-full text-left p-3 rounded-xl border-2 border-emerald-400 bg-emerald-50 text-xs font-bold text-emerald-800 flex items-center justify-between";
+
+                feedbackBox.className = "p-3 rounded-xl text-xs font-bold bg-red-50 text-red-800 border border-red-200";
+                feedbackBox.innerHTML = `❌ ${q.explanation}`;
+            }
+
+            document.getElementById('quizNextBtn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < grammarQuizData.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            const scoreScreen = document.getElementById('quizScoreScreen');
+            scoreScreen.classList.remove('hidden');
+
+            document.getElementById('finalScoreDisplay').innerText = quizScore;
+            const msgBox = document.getElementById('scoreFeedbackMessage');
+            const badgeBox = document.getElementById('grammarStarBadgeContainer');
+
+            if (quizScore >= 7) {
+                msgBox.innerHTML = "🌟 <strong>Outstanding Work!</strong> You have demonstrated great knowledge of English grammar!";
+                badgeBox.classList.remove('hidden');
+                
+                // Sync with Dashboard
+                document.getElementById('dashboardBadgeIcon').innerText = "🌟";
+                document.getElementById('dashboardBadgeStatus').innerText = "Grammar Star Badge Earned!";
+                document.getElementById('dashboardBadgeStatus').className = "text-xs text-emerald-600 font-bold";
+
+                confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
+            } else {
+                msgBox.innerHTML = "👍 <strong>Good Effort!</strong> Review the grammar cards above and try again to earn your Grammar Star Badge.";
+                badgeBox.classList.add('hidden');
+            }
+        }
+
+        function resetGrammarQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quizScoreScreen').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // Audio Story Player
+        function playListeningStory() {
+            const story = document.getElementById('listeningStoryText').innerText;
+            speakText(story);
+        }
+
+        // Mic Practice Simulator
+        function simulateMicRecord() {
+            const status = document.getElementById('micStatus');
+            const btn = document.getElementById('micBtn');
+
+            btn.classList.add('bg-emerald-500');
+            status.innerText = "🎙️ Listening... Speak now!";
+
+            setTimeout(() => {
+                btn.classList.remove('bg-emerald-500');
+                status.innerText = "🌟 Perfect pronunciation!";
+                confetti({ particleCount: 30 });
+            }, 2500);
+        }
+
+        // Guess Creature Game
+        function submitGuess(choice) {
+            const feedback = document.getElementById('guessFeedback');
+            feedback.classList.remove('hidden');
+
+            if (choice === 'Beetle') {
+                feedback.className = "text-emerald-600 font-bold text-xs bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 mt-2";
+                feedback.innerText = "🎉 Correct! It is a Beetle! 🐞";
+                confetti({ particleCount: 50 });
+            } else {
+                feedback.className = "text-red-500 font-bold text-xs bg-red-50 p-2.5 rounded-xl border border-red-200 mt-2";
+                feedback.innerText = "❌ Try again!";
+            }
+        }
+
+        // Certificate Field Sync
+        function updateCertificateFields() {
+            const sName = document.getElementById('inputStudentName').value;
+            const tName = document.getElementById('inputTeacherName').value;
+            const cDate = document.getElementById('inputCertDate').value;
+
+            document.getElementById('certDisplayStudentName').innerText = sName || "Student Name";
+            document.getElementById('certDisplayTeacherName').innerText = tName || "Teacher Signature";
+            document.getElementById('certDisplayDate').innerText = cDate || "Date";
+        }
+
+        // Print Certificate
+        function triggerPrintCertificate() {
+            confetti({ particleCount: 60, spread: 80, origin: { y: 0.6 } });
+            window.print();
+        }
+
+        // Publish Modal
+        function openPublishModal() { document.getElementById('publishModal').classList.remove('hidden'); }
+        function closePublishModal() { document.getElementById('publishModal').classList.add('hidden'); }
+        function copyShareUrl() {
+            const copyText = document.getElementById("shareUrlInput");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Website Link copied to clipboard!");
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function toggleTeacherEdit() {
+            alert("Teacher Mode Activated! Content fields are ready for editing.");
+        }
+
+        // Initialize Quiz on page load
+        window.onload = function() {
+            loadQuizQuestion();
+        }
+    </script>
+</body>
+</html>
